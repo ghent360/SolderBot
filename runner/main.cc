@@ -1,4 +1,5 @@
 #include "CommandRunner.h"
+#include "stringprintf.h"
 #include <unistd.h>
 
 int main() {
@@ -19,26 +20,28 @@ int main() {
     r.sendAndAck("G1 Z9 F800");
     r.sendAndAck("M400");
     //r.sendAndAck("G1 X51.67 Y113.5 F10000");
-    r.sendAndAck("G1 X54.14 Y113.5 F10000");
+    //r.sendAndAck("G1 X54.14 Y113.5 F10000");
+    std::string start = base::StringPrintf("G1 X%f Y%f F10000", 51.67+0*2.54, 113.5 + 0*2.54);
+    r.sendAndAck(start.c_str());
     r.sendAndAck("M400");
     r.sendAndAck("G91");
-    for (int i=0; i < 20; i++) {
+    for (int i=0; i < 19; i++) {
         r.sendAndAck("G1 Z-2.5 F800");
         r.sendAndAck("G1 Z-0.5 F200");
-        r.sendAndAck("G1 X0.5 Z-0.4 F100");
+        r.sendAndAck("G1 X0.6 Z-0.4 F100");
         r.sendAndAck("M400");
-        usleep(750000);
-        r.sendAndAck("G1 E7 F800");
+        sleep(2);
+        r.sendAndAck("G1 E8.5 F800");
         r.sendAndAck("M400");
-        r.sendAndAck("G1 E2 F200");
+        r.sendAndAck("G1 E-5 F800");
         r.sendAndAck("M400");
         sleep(3);
-        r.sendAndAck("G1 E1 F200");
+        r.sendAndAck("G1 E6.5 F400");
         r.sendAndAck("M400");
-        r.sendAndAck("G1 E-7.5 F2000");
+        r.sendAndAck("G1 E-6.75 F2000");
         r.sendAndAck("M400");
-        usleep(500000);
-        r.sendAndAck("G1 X-0.5 Z3.4 F800");
+        sleep(3);
+        r.sendAndAck("G1 X-0.6 Z3.4 F800");
         r.sendAndAck("M400");
         r.sendAndAck("G1 Y2.54 F5000");
         r.sendAndAck("M400");
