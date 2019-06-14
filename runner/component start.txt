@@ -21,4 +21,8 @@ Safe Z: 6
 Surface Z: 3.4
 Top Left  X44.10 Y113.25
 
+1x4 pin header (Vertical)
+X36.2 Y118.4
 
+LCD Header 2x5 (Horizontal)
+Top Row     X:22.5 Y:138.52

@@ -101,8 +101,12 @@ int main() {
     r.sendAndAck("M400");
     r.sendAndAck("G90");
 
-    //solderRowV(&r, 44.1 + 0*2.54, 113.5 + 10*2.54, 10);
-    
+    solderRowV(&r, 44.1 + 1*2.54, 113.5 + 0*2.54, 20);
+    solderRowV(&r, 44.1 + 0*2.54, 113.5 + 0*2.54, 20);
+    solderRowV(&r, 36.2, 118.4, 4);
+    solderRowH(&r, 22.5, 138.53, 5);
+    solderRowH(&r, 22.5, 138.53 + 2.54, 5);
+
     r.sendAndAck("G90");
     r.sendAndAck("G1 X0 Y0 F10000");
     //r.sendAndAck("M106 P0 S0");
