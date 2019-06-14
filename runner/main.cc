@@ -19,16 +19,16 @@ void moveFromPin(CommandRunner *r) {
 }
 
 void feedSolder1(CommandRunner *r) {
-    r->sendAndAck("G1 E8.1 F800");  // 1.6 + 5.5 + 1
+    r->sendAndAck("G1 E7.1 F800");  // 0.5 + 5.5 + 1
     r->sendAndAck("M400");
-    r->sendAndAck("G1 E-5 F800");   // 1.6 + 3.4
+    r->sendAndAck("G1 E-3.4 F800"); // 3.4
     r->sendAndAck("M400");
 }
 
 void feedSolder2(CommandRunner *r) {
-    r->sendAndAck("G1 E6 F400");    // 1.6 + 3.4 + 1
+    r->sendAndAck("G1 E5 F400");    // 0.5 + 3.4 + 1
     r->sendAndAck("M400");
-    r->sendAndAck("G1 E-7.1 F2000"); // 1.6 + 5.5
+    r->sendAndAck("G1 E-6 F2000"); // 0.5 + 5.5
     r->sendAndAck("M400");
 }
 
@@ -94,14 +94,15 @@ int main() {
     sleep(20);
 
     r.sendAndAck("G91");
-    r.sendAndAck("G1 E7.5 F800");
+    r.sendAndAck("G1 E6.5 F600");
     r.sendAndAck("M400");
     sleep(1);
-    r.sendAndAck("G1 E-7.1 F2000");
+    r.sendAndAck("G1 E-6 F2000");
     r.sendAndAck("M400");
     r.sendAndAck("G90");
 
-    solderRowV(&r, 44.1 + 0*2.54, 113.5 + 0*2.54, 10);
+    //solderRowV(&r, 44.1 + 0*2.54, 113.5 + 10*2.54, 10);
+    
     r.sendAndAck("G90");
     r.sendAndAck("G1 X0 Y0 F10000");
     //r.sendAndAck("M106 P0 S0");

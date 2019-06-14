@@ -1,0 +1,24 @@
+2x20 pin header (Vertica)
+Top Left  X51.67 Y113.5
+Top Right X54.14 Y113.5
+
+1x4 pin header (Vertical)
+X43.67 Y117.65
+
+LCD Header 2x5 (Horizontal)
+Top Row     X:30.17 Y:138.27
+Bottom Row  X:30.17 Y:140.81
+
+Pwr 3.5
+X:41.33 Y:156.81
+
+Pwr 5.08
+X:25.83 Y:156.81
+
+
+---------------------------------------------
+Safe Z: 6
+Surface Z: 3.4
+Top Left  X44.10 Y113.25
+
+
