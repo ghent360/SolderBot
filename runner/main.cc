@@ -2,6 +2,16 @@
 #include "stringprintf.h"
 #include <unistd.h>
 
+void wait(double time) {
+    if (time <= 0) return;
+    int sec = (int)time;
+    long usec = (long)((time - sec) * 1000000);
+    if (usec < 0)
+        usec = 0;
+    sleep(sec);
+    usleep(usec);
+}
+
 void moveToPin(CommandRunner *r) {
     // Descend fast
     r->sendAndAck("G1 Z-2.1 F800");
@@ -18,27 +28,36 @@ void moveFromPin(CommandRunner *r) {
     r->sendAndAck("M400");
 }
 
-void feedSolder1(CommandRunner *r) {
-    r->sendAndAck("G1 E7.1 F800");  // 0.5 + 5.5 + 1
+void feedSolder1(CommandRunner *r, double solderDist) {
+    std::string cmd = base::StringPrintf("G1 E%f F800", 0.5 + 5.5 + solderDist);
+    r->sendAndAck(cmd);
     r->sendAndAck("M400");
     r->sendAndAck("G1 E-3.4 F800"); // 3.4
     r->sendAndAck("M400");
 }
 
-void feedSolder2(CommandRunner *r) {
-    r->sendAndAck("G1 E5 F400");    // 0.5 + 3.4 + 1
+void feedSolder2(CommandRunner *r, double solderDist) {
+    std::string cmd = base::StringPrintf("G1 E%f F400", 0.5 + 3.4 + solderDist);
+    r->sendAndAck(cmd);
     r->sendAndAck("M400");
     r->sendAndAck("G1 E-6 F2000"); // 0.5 + 5.5
     r->sendAndAck("M400");
 }
 
-void solderPin(CommandRunner *r) {
+void solderPin(
+    CommandRunner *r,
+    double solderDist,
+    double heatWait1 = 5,
+    double heatWait2 = 2,
+    double heatWait3 = -1) {
     moveToPin(r);
-    sleep(5); // Wait for pin to heat up
-    feedSolder1(r);
-    sleep(2); // Wait for solder to melt
-    feedSolder2(r);
-    sleep(2); // Wait for solder to melt
+    wait(heatWait1); // Wait for pin to heat up
+    feedSolder1(r, solderDist);
+    wait(heatWait2); // Wait for solder to melt
+    feedSolder2(r, solderDist);
+    if (heatWait3 < 0)
+        heatWait3 = heatWait2;
+    wait(heatWait3); // Wait for solder to melt
     moveFromPin(r);
 }
 
@@ -48,7 +67,15 @@ void toSafeZ(CommandRunner *r) {
     r->sendAndAck("M400");
 }
 
-void solderRowV(CommandRunner *r, double startX, double startY, uint32_t numPins, double pinSpacing = 2.54) {
+void solderRowV(
+    CommandRunner *r,
+    double startX,
+    double startY,
+    uint32_t numPins,
+    double pinSpacing = 2.54,
+    double solderDist = 1,
+    double heatWait1 = 5,
+    double heatWait2 = 2) {
     toSafeZ(r);
     std::string start = base::StringPrintf("G1 X%f Y%f F10000", startX, startY);
     r->sendAndAck(start.c_str());
@@ -56,13 +83,21 @@ void solderRowV(CommandRunner *r, double startX, double startY, uint32_t numPins
     r->sendAndAck("G91");
     start = base::StringPrintf("G1 Y%f F5000", pinSpacing);
     for (int i=0; i < numPins; i++) {
-        solderPin(r);
+        solderPin(r, solderDist, heatWait1, heatWait2);
         r->sendAndAck(start.c_str()); // //r->sendAndAck("G1 Y2.54 F5000");
         r->sendAndAck("M400");
     }
 }
 
-void solderRowH(CommandRunner *r, double startX, double startY, uint32_t numPins, double pinSpacing = 2.54) {
+void solderRowH(
+    CommandRunner *r,
+    double startX,
+    double startY,
+    uint32_t numPins,
+    double pinSpacing = 2.54,
+    double solderDist = 1,
+    double heatWait1 = 5,
+    double heatWait2 = 2) {
     toSafeZ(r);
     std::string start = base::StringPrintf("G1 X%f Y%f F10000", startX + (numPins - 1) * pinSpacing, startY);
     r->sendAndAck(start.c_str());
@@ -70,7 +105,7 @@ void solderRowH(CommandRunner *r, double startX, double startY, uint32_t numPins
     r->sendAndAck("G91");
     start = base::StringPrintf("G1 X%f F5000", -pinSpacing);
     for (int i=0; i < numPins; i++) {
-        solderPin(r);
+        solderPin(r, solderDist, heatWait1, heatWait2);
         r->sendAndAck(start.c_str()); // //r->sendAndAck("G1 Y2.54 F5000");
         r->sendAndAck("M400");
     }
@@ -94,19 +129,20 @@ int main() {
     sleep(20);
 
     r.sendAndAck("G91");
-    r.sendAndAck("G1 E6.5 F600");
+    r.sendAndAck("G1 E7.5 F600");
     r.sendAndAck("M400");
     sleep(1);
     r.sendAndAck("G1 E-6 F2000");
     r.sendAndAck("M400");
     r.sendAndAck("G90");
 
-    solderRowV(&r, 44.1 + 1*2.54, 113.5 + 0*2.54, 20);
-    solderRowV(&r, 44.1 + 0*2.54, 113.5 + 0*2.54, 20);
+    solderRowV(&r, 44.1 + 2.54, 113.5, 20);
+    solderRowV(&r, 44.1, 113.5, 20);
     solderRowV(&r, 36.2, 118.4, 4);
     solderRowH(&r, 22.5, 138.53, 5);
     solderRowH(&r, 22.5, 138.53 + 2.54, 5);
-
+    solderRowH(&r, 33.86, 156.8, 2, 3.5, 2.5, 5, 3.5);
+    solderRowH(&r, 18.1, 156.8, 2, 5.08, 3.5, 5, 4);
     r.sendAndAck("G90");
     r.sendAndAck("G1 X0 Y0 F10000");
     //r.sendAndAck("M106 P0 S0");

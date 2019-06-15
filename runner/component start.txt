@@ -26,3 +26,9 @@ X36.2 Y118.4
 
 LCD Header 2x5 (Horizontal)
 Top Row     X:22.5 Y:138.52
+
+Pwr 3.5
+X:33.86 Y:157.1
+
+Pwr 5.08
+X:18.36 Y:157.1
