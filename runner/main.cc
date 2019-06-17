@@ -2,6 +2,8 @@
 #include "stringprintf.h"
 #include <unistd.h>
 
+void toSafeZ(CommandRunner *r);
+
 void wait(double time) {
     if (time <= 0) return;
     int sec = (int)time;
@@ -61,12 +63,6 @@ void solderPin(
     moveFromPin(r);
 }
 
-void toSafeZ(CommandRunner *r) {
-    r->sendAndAck("G90");
-    r->sendAndAck("G1 Z5.8 F800");
-    r->sendAndAck("M400");
-}
-
 void solderRowV(
     CommandRunner *r,
     double startX,
@@ -111,6 +107,12 @@ void solderRowH(
     }
 }
 
+void toSafeZ(CommandRunner *r) {
+    r->sendAndAck("G90");
+    r->sendAndAck("G1 Z7.2 F800");
+    r->sendAndAck("M400");
+}
+
 int main() {
     CommandRunner r("/dev/ttyUSB0");
     if (!r.isReady()) {
@@ -136,6 +138,7 @@ int main() {
     r.sendAndAck("M400");
     r.sendAndAck("G90");
 
+/*
     solderRowV(&r, 44.1 + 2.54, 113.5, 20);
     solderRowV(&r, 44.1, 113.5, 20);
     solderRowV(&r, 36.2, 118.4, 4);
@@ -143,9 +146,14 @@ int main() {
     solderRowH(&r, 22.5, 138.53 + 2.54, 5);
     solderRowH(&r, 33.86, 156.8, 2, 3.5, 2.5, 5, 3.5);
     solderRowH(&r, 18.1, 156.8, 2, 5.08, 3.5, 5, 4);
+*/
+    solderRowV(&r, 6.15 + 2.54, 96.75, 19, 2.54, 0.7, 3, 1.5);
+    solderRowV(&r, 6.15, 96.75, 19, 2.54, 0.7, 3, 1.5);
+    solderRowV(&r, 67.21 + 2.54, 96.75, 19, 2.54, 0.7, 3, 1.5);
+    solderRowV(&r, 67.21, 96.75, 19, 2.54, 0.7, 3, 1.5);
     r.sendAndAck("G90");
     r.sendAndAck("G1 X0 Y0 F10000");
-    //r.sendAndAck("M106 P0 S0");
+    r.sendAndAck("M106 P0 S0");
     r.sendAndAck("M42 P27 S255");
     r.sendAndAck("M18");
 }
