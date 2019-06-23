@@ -31,7 +31,7 @@ void moveFromPin(CommandRunner *r) {
 }
 
 void feedSolder1(CommandRunner *r, double solderDist) {
-    std::string cmd = base::StringPrintf("G1 E%f F800", 0.5 + 5.5 + solderDist);
+    std::string cmd = base::StringPrintf("G1 E%f F800", 0.5 + 3.4 + solderDist);
     r->sendAndAck(cmd);
     r->sendAndAck("M400");
     r->sendAndAck("G1 E-3.4 F800"); // 3.4
@@ -42,7 +42,7 @@ void feedSolder2(CommandRunner *r, double solderDist) {
     std::string cmd = base::StringPrintf("G1 E%f F400", 0.5 + 3.4 + solderDist);
     r->sendAndAck(cmd);
     r->sendAndAck("M400");
-    r->sendAndAck("G1 E-6 F2000"); // 0.5 + 5.5
+    r->sendAndAck("G1 E-3.9 F2000"); // 0.5 + 3.4
     r->sendAndAck("M400");
 }
 
@@ -107,9 +107,12 @@ void solderRowH(
     }
 }
 
+double safeZ = 6.6;
+
 void toSafeZ(CommandRunner *r) {
     r->sendAndAck("G90");
-    r->sendAndAck("G1 Z7.2 F800");
+    std::string cmd = base::StringPrintf("G1 Z%f F800", safeZ);
+    r->sendAndAck(cmd);
     r->sendAndAck("M400");
 }
 
@@ -134,23 +137,61 @@ int main() {
     r.sendAndAck("G1 E7.5 F600");
     r.sendAndAck("M400");
     sleep(1);
-    r.sendAndAck("G1 E-6 F2000");
+    r.sendAndAck("G1 E-3.4 F2000");
     r.sendAndAck("M400");
     r.sendAndAck("G90");
 
 /*
+Callibration board:
+Header 2x20:
     solderRowV(&r, 44.1 + 2.54, 113.5, 20);
     solderRowV(&r, 44.1, 113.5, 20);
+Serial 1x4:
     solderRowV(&r, 36.2, 118.4, 4);
+LCD 2x5:    
     solderRowH(&r, 22.5, 138.53, 5);
     solderRowH(&r, 22.5, 138.53 + 2.54, 5);
+Power 3.5    
     solderRowH(&r, 33.86, 156.8, 2, 3.5, 2.5, 5, 3.5);
+Power 5.08
     solderRowH(&r, 18.1, 156.8, 2, 5.08, 3.5, 5, 4);
 */
-    solderRowV(&r, 6.75 + 2.54, 96.25, 19, 2.54, 0.8, 2.5, 2);
-    solderRowV(&r, 6.75       , 96.25, 19, 2.54, 0.8, 2.5, 2);
-    solderRowV(&r, 67.3 + 2.54, 96.25, 19, 2.54, 0.8, 2.5, 2);
-    solderRowV(&r, 67.3       , 96.25, 19, 2.54, 0.8, 2.5, 2);
+/*
+F407-top: Dual headers 2x19
+    solderRowV(&r, 6.75 + 2.54, 96.25, 19, 2.54, 0.8, 3, 2);
+    solderRowV(&r, 6.75       , 96.25, 19, 2.54, 0.8, 3, 2);
+    solderRowV(&r, 67.3 + 2.54, 96.25, 19, 2.54, 0.8, 3, 2);
+    solderRowV(&r, 67.3       , 96.25, 19, 2.54, 0.8, 3, 2);
+*/
+
+/*
+F407-bottom: 5xIDC(2x5) connectors
+*/
+    r.sendAndAck("G1 Z15 F800");
+    r.sendAndAck("M400");
+    r.sendAndAck("G1 X9 Y121 F10000");
+    r.sendAndAck("M400");
+
+    safeZ = 7;
+    solderRowH(&r, 9.05, 120.7       , 5, 2.54, 1, 3, 2.5);
+    solderRowH(&r, 9.05, 120.7 + 2.54, 5, 2.54, 1, 3, 2.5);
+
+    safeZ = 7;
+    solderRowV(&r, 7.1 + 2.54, 134.75, 5, 2.54, 1, 3, 2.5);
+    solderRowV(&r, 7.1       , 134.75, 5, 2.54, 1, 3, 2.5);
+
+    safeZ = 7.2;
+    solderRowV(&r, 7.1 + 2.54, 155.75, 5, 2.54, 1, 3, 2.5);
+    solderRowV(&r, 7.1       , 155.75, 5, 2.54, 1, 3, 2.5);
+
+    safeZ = 7.2;
+    solderRowH(&r, 19.25, 165.2       , 5, 2.54, 1, 3, 2.5);
+    solderRowH(&r, 19.25, 165.2 + 2.54, 5, 2.54, 1, 3, 2.5);
+
+    safeZ = 6.6;
+    solderRowV(&r, 80.40,       140.25, 4, 2.54, 1.4, 3, 3);
+
+    r.sendAndAck("G1 E-2.1 F800");
     r.sendAndAck("G90");
     r.sendAndAck("G1 Z15 F800");
     r.sendAndAck("G1 X0 Y0 F10000");
