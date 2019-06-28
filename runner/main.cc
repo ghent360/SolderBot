@@ -166,7 +166,7 @@ F407-top: Dual headers 2x19
 
 /*
 F407-bottom: 5xIDC(2x5) connectors
-*/
+
     r.sendAndAck("G1 Z15 F800");
     r.sendAndAck("M400");
     r.sendAndAck("G1 X9 Y121 F10000");
@@ -190,6 +190,18 @@ F407-bottom: 5xIDC(2x5) connectors
 
     safeZ = 6.6;
     solderRowV(&r, 80.40,       140.25, 4, 2.54, 1.4, 3, 3);
+*/
+
+/*
+TMC2660 r4 - top
+ */
+    safeZ = 5.7;
+    solderRowH(&r, 12.00, 83.25       , 19, 2.54);
+    solderRowH(&r, 12.00, 83.25 + 2.54, 19, 2.54);
+
+    safeZ = 6.4;
+    solderRowH(&r, 11.3, 144.00       , 19, 2.54, 1, 3, 2.5);
+    solderRowH(&r, 11.3, 144.00 + 2.54, 19, 2.54, 1, 3, 2.5);
 
     r.sendAndAck("G1 E-2.1 F800");
     r.sendAndAck("G90");

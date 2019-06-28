@@ -37,9 +37,8 @@ F-407 Bottom
 Safe Z 7.35
 Left Header 6.15, 96.75
 Right header 67.21 96.75
-
 ---------------------------------------------------
-F-407 Bottom
+F-407 top
 Z +8 to escape the headers
 Safe Z 6.6
 LCD Top (2x5) - horizontal
@@ -50,3 +49,14 @@ LCD 3- vertical
 6.74, 156.22
 LCD Bottom - horizontal
 19.25, 165.5
+
+---------------------------------------------------
+2660-Top
+Z:5.8
+
+Header top (2x19) horizontal
+X:12.00 Y:83.25
+
+Z6.2
+Header bottom (2x19) horizontal
+X:11.75 Y:144.00
