@@ -195,13 +195,14 @@ F407-bottom: 5xIDC(2x5) connectors
 /*
 TMC2660 r4 - top
  */
-    safeZ = 5.7;
-    solderRowH(&r, 12.00, 83.25       , 19, 2.54);
-    solderRowH(&r, 12.00, 83.25 + 2.54, 19, 2.54);
 
-    safeZ = 6.4;
-    solderRowH(&r, 11.3, 144.00       , 19, 2.54, 1, 3, 2.5);
-    solderRowH(&r, 11.3, 144.00 + 2.54, 19, 2.54, 1, 3, 2.5);
+    safeZ = 5.8;
+    solderRowH(&r, 11.75, 144.15       , 19, 2.54, 1.075, 3, 4);
+    solderRowH(&r, 11.75, 144.15 + 2.54, 19, 2.54, 1.075, 3, 4);
+
+    safeZ = 5.85;
+    solderRowH(&r, 11.85, 83.3       , 19, 2.54, 1.075, 3, 4);
+    solderRowH(&r, 11.85, 83.3 + 2.54, 19, 2.54, 1.075, 3, 4);
 
     r.sendAndAck("G1 E-2.1 F800");
     r.sendAndAck("G90");
